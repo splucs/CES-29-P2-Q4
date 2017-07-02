@@ -98,7 +98,8 @@ public class VulnerableClassTest {
 		System.setOut(new PrintStream(outContent));
 		
 		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo não válido."));
+		//System.out.println(outContent.toString());
+		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
 
 		FileName = "C:/testInvalid.txt";
 		System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -106,7 +107,7 @@ public class VulnerableClassTest {
 		System.setOut(new PrintStream(outContent));
 		
 		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo não válido."));
+		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
 
 		FileName = "WINDIR/testInvalid.txt";
 		System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -114,7 +115,7 @@ public class VulnerableClassTest {
 		System.setOut(new PrintStream(outContent));
 		
 		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo não válido."));
+		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
 
 		FileName = "SYSDIR/testInvalid.txt";
 		System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -122,7 +123,7 @@ public class VulnerableClassTest {
 		System.setOut(new PrintStream(outContent));
 		
 		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo não válido."));
+		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
 		
 		System.setIn(stdin);
 		System.setOut(new PrintStream(stdout));
