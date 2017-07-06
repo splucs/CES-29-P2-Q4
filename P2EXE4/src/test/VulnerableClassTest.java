@@ -1,6 +1,9 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import exe.VulnerableClass;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,166 +20,165 @@ import java.io.PrintStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import exe2.VulnerableClass;
 
 public class VulnerableClassTest {
 
-	VulnerableClass instance;
-	
-	@Before
-	public void SetUp(){
-		instance = new VulnerableClass();
-	}
-	
-	@Test
-	public void SuccessfulRead() {
-		String FileName = "testRead.txt";
-		File f = new File(FileName);
-		if (f.exists()) f.delete();
-		
-		BufferedWriter buffWrite = null;
-		try {
-			buffWrite = new BufferedWriter(new FileWriter(FileName));
-			buffWrite.append("test content");
-			buffWrite.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-		
-		String input = "R\n";
-		InputStream stdin = System.in;
-		OutputStream stdout = System.out;
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("test content"));
-		
-		System.setIn(stdin);
-		System.setOut(new PrintStream(stdout));
-	}
-	
-	@Test
-	public void SuccessfulWrite() {
-		String FileName = "testWrite.txt";
-		File f = new File(FileName);
-		if (f.exists()) f.delete();
-		
-		String input = "W\ntest content";
-		InputStream stdin = System.in;
-		OutputStream stdout = System.out;
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		
-		System.setIn(stdin);
-		System.setOut(new PrintStream(stdout));
-		
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(FileName));
-			assertTrue(br.readLine().contains("test content"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	}
-	
-	@Test
-	public void invalidFileName(){
-		String input = "R";
-		InputStream stdin = System.in;
-		OutputStream stdout = System.out;
+  VulnerableClass instance;
+  
+  /**
+   *  Instantiation.
+   */
+  @Before
+  public void setUp() {
+    instance = new VulnerableClass();
+  }
+  
+  /**
+   *  Successful read test.
+   */
+  @Test
+  public void successfulRead() {
+    String fileName = "testRead.txt";
+    File f = new File(fileName);
+    if (f.exists()) {
+      f.delete();
+    }
+    BufferedWriter buffWrite = null;
+    try {
+      buffWrite = new BufferedWriter(new FileWriter(fileName));
+      buffWrite.append("test content");
+      buffWrite.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+    String input = "R\n";
+    final InputStream stdin = System.in;
+    final OutputStream stdout = System.out;
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("test content"));
+    System.setIn(stdin);
+    System.setOut(new PrintStream(stdout));
+  }
 
-		String FileName = "../testInvalid.txt";
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		//System.out.println(outContent.toString());
-		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
+  /**
+   *  Successful write test.
+   */
+  @Test
+  public void successfulWrite() {
+    String fileName = "testWrite.txt";
+    File f = new File(fileName);
+    if (f.exists()) {
+      f.delete();
+    }
+    String input = "W\ntest content";
+    final InputStream stdin = System.in;
+    final OutputStream stdout = System.out;
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    System.setIn(stdin);
+    System.setOut(new PrintStream(stdout));
+    BufferedReader br = null;
+    try {
+      br = new BufferedReader(new FileReader(fileName));
+      assertTrue(br.readLine().contains("test content"));
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+  }
+  
+  /**
+   *  Invalid name test.
+   */
+  @Test
+  public void invalidfileName() {
+    String input = "R";
+    final InputStream stdin = System.in;
+    final OutputStream stdout = System.out;
+    String fileName = "../testInvalid.txt";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
+    fileName = "C:/testInvalid.txt";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
+    fileName = "WINDIR/testInvalid.txt";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
+    fileName = "SYSDIR/testInvalid.txt";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
+    System.setIn(stdin);
+    System.setOut(new PrintStream(stdout));
+  }
+  
+  /**
+   *  Non existent file test.
+   */
+  @Test
+  public void nonExistentFileRead() {
+    String fileName = "testNonExistent.txt";
+    File f = new File(fileName);
+    if (f.exists()) {
+      f.delete();
+    }
+    String input = "R\n";
+    final InputStream stdin = System.in;
+    final OutputStream stdout = System.out;
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("Arquivo nao existente."));
+    System.setIn(stdin);
+    System.setOut(new PrintStream(stdout));
+  }
 
-		FileName = "C:/testInvalid.txt";
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
-
-		FileName = "WINDIR/testInvalid.txt";
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
-
-		FileName = "SYSDIR/testInvalid.txt";
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Nome de arquivo nao valido."));
-		
-		System.setIn(stdin);
-		System.setOut(new PrintStream(stdout));
-	}
-	
-	@Test
-	public void NonExistentFileRead() {
-		String FileName = "testNonExistent.txt";
-		File f = new File(FileName);
-		if (f.exists()) f.delete();
-		
-		String input = "R\n";
-		InputStream stdin = System.in;
-		OutputStream stdout = System.out;
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Arquivo nao existente."));
-		
-		System.setIn(stdin);
-		System.setOut(new PrintStream(stdout));
-	}
-	
-	@Test
-	public void ExistentFileWrite() {
-		String FileName = "testExistent.txt";
-		File f = new File(FileName);
-		if (f.exists()) f.delete();
-		
-		BufferedWriter buffWrite = null;
-		try {
-			buffWrite = new BufferedWriter(new FileWriter(FileName));
-			buffWrite.append("test content");
-			buffWrite.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-		
-		String input = "W\n";
-		InputStream stdin = System.in;
-		OutputStream stdout = System.out;
-		System.setIn(new ByteArrayInputStream(input.getBytes()));
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		
-		instance.vulnerableMethod(FileName);
-		assertTrue(outContent.toString().contains("Arquivo ja existente, escrita proibida."));
-		
-		System.setIn(stdin);
-		System.setOut(new PrintStream(stdout));
-	}
-
+  /**
+   *  Existent file write test.
+   */
+  @Test
+  public void existentFileWrite() {
+    String fileName = "testExistent.txt";
+    File f = new File(fileName);
+    if (f.exists()) {
+      f.delete();
+    }
+    BufferedWriter buffWrite = null;
+    try {
+      buffWrite = new BufferedWriter(new FileWriter(fileName));
+      buffWrite.append("test content");
+      buffWrite.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    }
+    String input = "W\n";
+    final InputStream stdin = System.in;
+    final OutputStream stdout = System.out;
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    instance.vulnerableMethod(fileName);
+    assertTrue(outContent.toString().contains("Arquivo ja existente, escrita proibida."));
+    System.setIn(stdin);
+    System.setOut(new PrintStream(stdout));
+  }
 }
